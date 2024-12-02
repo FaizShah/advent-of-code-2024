@@ -1,32 +1,29 @@
 #!/usr/bin/env luajit
+
+-- Function to read and parse the file
 local function read_file(filename)
-    local rows = {}
+    local col1, col2 = {}, {}
     for line in io.lines(filename) do
-        local col1, col2 = line:match("(%d+)%s+(%d+)")
-        if col1 and col2 then
-            rows[#rows + 1] = { tonumber(col1), tonumber(col2) }
+        local a, b = line:match("(%d+)%s+(%d+)")
+        if a and b then
+            col1[#col1 + 1] = tonumber(a)
+            col2[#col2 + 1] = tonumber(b)
         end
     end
-    return rows
+    return col1, col2
 end
 
-local function compute_difference(rows)
-    local col1, col2 = {}, {}
-    for _, row in ipairs(rows) do
-        col1[#col1 + 1] = row[1]
-        col2[#col2 + 1] = row[2]
-    end
+-- Function to compute the total difference
+local function compute_difference(col1, col2)
     table.sort(col1)
     table.sort(col2)
-    local total_diff = 0
+    local total = 0
     for i = 1, #col1 do
-        total_diff = total_diff + math.abs(col1[i] - col2[i])
+        total = total + math.abs(col1[i] - col2[i])
     end
-    return total_diff
+    return total
 end
 
 -- Main script
-local filename = arg[1]
-local rows = read_file(filename)
-local result = compute_difference(rows)
-print(result)
+local col1, col2 = read_file(arg[1])
+print(compute_difference(col1, col2))
